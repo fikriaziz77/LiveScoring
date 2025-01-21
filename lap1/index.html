@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COURT 1</title>
+    <link rel="icon" type="image/x-icon" href="image/iconweb.ico">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh; /* Adjust body height */
+            background-color: #f4f4f4;
+            position: relative;
+        }
+
+        .shape {
+            position: absolute; /* Positioning is now enabled for individual shapes */
+            display: flex;
+            align-items: center;
+            text-align: left;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bold;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        .pemain1 {
+            width: 65vw;
+            height: 10vw;
+            background: linear-gradient(0deg,rgb(61, 61, 61),rgb(160, 160, 160));
+            top: 0vw; 
+            left: 0vw; 
+            font-size: calc(4.5vw); 
+            justify-content: left;
+            padding-left: 2%;
+            border-top-left-radius: 20%;
+            z-index: 4;
+        }
+
+        .pemain2 {
+            width: 65vw;
+            height: 10vw;
+            background: linear-gradient(0deg,rgb(61, 61, 61),rgb(160, 160, 160));
+            top: 10.4vw; 
+            left: 0vw; 
+            font-size: calc(4.5vw); 
+            justify-content: left;
+            padding-left: 2%;
+            border-top-left-radius: 20%;
+            z-index: 4;
+        }
+
+        .ball1 {
+            width: 1.3vw;
+            height: 10vw;
+            background-color: rgb(238, 255, 0);
+            top: 0vw; 
+            left: 65.7vw; 
+            justify-content: center;
+            z-index: 5;
+            
+        }
+
+        .ball2 {
+            width: 1.3vw;
+            height: 10vw;
+            background-color: rgb(238, 255, 0);
+            top: 10.4vw; 
+            left: 65.7vw; 
+            justify-content: center;
+            z-index: 5;
+        }
+
+        .skor11 {
+            width: 10vw;
+            height: 10vw;
+            background-color: rgb(51, 51, 51);
+            top: 0vw; 
+            left: 65vw; 
+            font-size: calc(6vw);  
+            justify-content: center;
+            padding-left: 2%;
+            z-index: 3;
+            
+        }
+
+        .skor12 {
+            width: 10vw;
+            height: 10vw;
+            background-color: rgb(51, 51, 51);
+            top: 10.4vw; 
+            left: 65vw; 
+            font-size: calc(6vw); 
+            justify-content: center;
+            padding-left: 2%;
+            z-index: 3;
+        }
+
+        .skor21 {
+            width: 10vw;
+            height: 10vw;
+            background-color: rgb(51, 51, 51);
+            top: 0vw; 
+            left: 75vw; 
+            font-size: calc(6vw); 
+            justify-content: center;
+            padding-left: 2%;
+            z-index: 2;
+            
+        }
+
+        .skor22 {
+            width: 10vw;
+            height: 10vw;
+            background-color: rgb(51, 51, 51);
+            top: 10.4vw; 
+            left: 75vw; 
+            font-size: calc(6vw); 
+            justify-content: center;
+            padding-left: 2%;
+            z-index: 2;
+        }
+
+        .skor31 {
+            width: 10vw;
+            height: 10vw;
+            background-color: rgb(51, 51, 51);
+            top: 0vw; 
+            left: 85vw; 
+            font-size: calc(6vw); 
+            justify-content: center;
+            padding-left: 2%;
+            z-index: 1;
+            
+        }
+
+        .skor32 {
+            width: 10vw;
+            height: 10vw;
+            background-color: rgb(51, 51, 51);
+            top: 10.4vw; 
+            left: 85vw; 
+            font-size: calc(6vw); 
+            justify-content: center;
+            padding-left: 2%;
+            z-index: 1;
+        }
+
+        .shape.hidden {
+            opacity: 0; 
+            pointer-events: none; 
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="shape pemain1"></div>
+    <div class="shape pemain2"></div>
+    <div class="shape skor11"></div>
+    <div class="shape skor12"></div>
+    <div class="shape skor21"></div>
+    <div class="shape skor22"></div>  
+    <div class="shape skor31"></div>
+    <div class="shape skor32"></div>   
+    <div class="shape ball1"></div>
+    <div class="shape ball2"></div>  
+
+    <!--button onclick="toggleShape('skor22')">Toggle Rectangle 2</button-->
+
+    <script>
+        let game = 0;
+        let scc11 = 0;
+        let scc12 = 0;
+        let scc21 = 0;
+        let scc22 = 0;
+        let scc31 = 0;
+        let scc32 = 0;
+        let s12 = 0;
+        
+
+        // Function to toggle visibility of shapes
+        function showShape(shapeClass) {
+            const shape = document.querySelector(`.${shapeClass}`);
+            if (shape) {
+                shape.classList.remove('hidden'); // Remove the "hidden" class to show the shape
+            }
+        }
+
+        // Function to hide a shape
+        function hideShape(shapeClass) {
+            const shape = document.querySelector(`.${shapeClass}`);
+            if (shape) {
+                shape.classList.add('hidden'); // Add the "hidden" class to hide the shape
+            }
+        }
+
+        var source = new EventSource("fetch.php");
+        source.onmessage = function (event) {
+        var arrayData = JSON.parse(event.data);
+            
+            // Assuming the data structure includes tim1p1, tim1scr, tim2scr, etc.
+            arrayData.forEach(e => {
+                // Update the divs dynamically
+                
+                const pemain1data = document.querySelector('.shape.pemain1');
+                const pemain2data = document.querySelector('.shape.pemain2');
+                const sc11 = document.querySelector('.shape.skor11');
+                const sc12 = document.querySelector('.shape.skor12');
+                const sc21 = document.querySelector('.shape.skor21');
+                const sc22 = document.querySelector('.shape.skor22');
+                const sc31 = document.querySelector('.shape.skor31');
+                const sc32 = document.querySelector('.shape.skor32');
+                
+                const match = e.tim1p1;
+                if(!match){
+                    hideShape('pemain1'); 
+                    hideShape('pemain2');
+                    hideShape('skor11'); 
+                    hideShape('skor12'); 
+                    hideShape('skor21'); 
+                    hideShape('skor22'); 
+                    hideShape('skor31'); 
+                    hideShape('skor32'); 
+                }
+                else{
+                    showShape('pemain1'); 
+                    showShape('pemain2');
+                    showShape('skor11'); 
+                    showShape('skor12'); 
+                    showShape('skor21'); 
+                    showShape('skor22'); 
+                    showShape('skor31'); 
+                    showShape('skor32'); 
+                }
+
+                
+                const dbl = e.tim1p2;
+                if (dbl) {
+                    const splitname1 = e.tim1p1.split(' ');
+                    const splitname2 = e.tim1p2.split(' ');
+                    if (pemain1data) pemain1data.textContent = `${splitname1[splitname1.length - 1]} / ${splitname2[splitname2.length - 1]}`;
+                    
+                    const splitname3 = e.tim2p1.split(' ');
+                    const splitname4 = e.tim2p2.split(' ');
+                    if (pemain2data) pemain2data.textContent = `${splitname3[splitname3.length - 1]} / ${splitname4[splitname4.length - 1]}`;
+                }
+                else {
+                    if (pemain1data) pemain1data.textContent = e.tim1p1;
+                    if (pemain2data) pemain2data.textContent = e.tim2p1;
+                }
+
+                const set1 = e.tim1set;
+                const set2 = e.tim2set;
+                s12 = set1 + set2;
+                if (set1 == 0 && set2 == 0) {
+                    game = 1;
+                    hideShape('skor21'); 
+                    hideShape('skor22'); 
+                    hideShape('skor31'); 
+                    hideShape('skor32');
+                }
+
+                if (set1 >= 1 || set2 >= 1) {
+                    game = 2;
+                    showShape('skor21'); 
+                    showShape('skor22'); 
+                    hideShape('skor31'); 
+                    hideShape('skor32'); 
+                }
+
+                if (set1 >= 1 && set2 >= 1) {
+                    game = 3;
+                    showShape('skor31'); 
+                    showShape('skor32'); 
+                }
+
+                switch(game) {
+                case 1:
+                    scc11 = e.tim1scr;
+                    scc12 = e.tim2scr;
+                    break;
+                case 2:
+                    scc21 = e.tim1scr;
+                    scc22 = e.tim2scr;
+                    break;
+                case 3:
+                    scc31 = e.tim1scr;
+                    scc32 = e.tim2scr;
+                    break;
+                }         
+
+            if (sc11) sc11.textContent = scc11;
+            if (sc12) sc12.textContent = scc12;
+            if (sc21) sc21.textContent = scc21;
+            if (sc22) sc22.textContent = scc22;
+            if (sc31) sc31.textContent = scc31;
+            if (sc32) sc32.textContent = scc32;
+
+            const ball = e.ball;
+            if (e.tim1scr == 0 && e.tim2scr == 0){
+                hideShape('ball1'); 
+                hideShape('ball2');
+            }
+            else{
+                if (ball == 0) {
+                    showShape('ball1'); 
+                    hideShape('ball2'); 
+                }   
+                else {
+                    showShape('ball2'); 
+                    hideShape('ball1');
+                }   
+            }
+                //if (skor1Element) skor1Element.textContent = `Score 1: ${e.tim1scr}`;
+            });
+        }
+
+       
+    </script>
+</body>
+</html>
