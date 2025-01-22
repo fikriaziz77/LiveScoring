@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COURT 1</title>
+    <link rel="icon" type="image/x-icon" href="image/iconweb.ico">
+   <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh; /* Adjust body height */
+            background-color: #f4f4f4;
+            position: relative;
+        }
+
+        .shape {
+            position: absolute; /* Positioning is now enabled for individual shapes */
+            display: flex;
+            align-items: center;
+            text-align: left;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bold;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        .pemain1 {
+            width: 65vw;
+            height: 10vw;
+            background: linear-gradient(0deg,rgb(61, 61, 61),rgb(160, 160, 160));
+            top: 0vw; 
+            left: 0vw; 
+            font-size: calc(4.5vw); 
+            justify-content: left;
+            padding-left: 2%;
+            border-top-left-radius: 20%;
+            z-index: 4;
+        }
+
+        .pemain2 {
+            width: 65vw;
+            height: 10vw;
+            background: linear-gradient(0deg,rgb(61, 61, 61),rgb(160, 160, 160));
+            top: 10.4vw; 
+            left: 0vw; 
+            font-size: calc(4.5vw); 
+            justify-content: left;
+            padding-left: 2%;
+            border-top-left-radius: 20%;
+            z-index: 4;
+        }
+
+        .ball1 {
+            width: 1.3vw;
+            height: 10vw;
+            background-color: rgb(238, 255, 0);
+            top: 0vw; 
+            left: 65.7vw; 
+            justify-content: center;
+            z-index: 5;
+            
+        }
+
+        .ball2 {
+            width: 1.3vw;
+            height: 10vw;
+            background-color: rgb(238, 255, 0);
+            top: 10.4vw; 
+            left: 65.7vw; 
+            justify-content: center;
+            z-index: 5;
+        }
+
+        .skor11 {
+            width: 10vw;
+            height: 10vw;
+            background-color: rgb(51, 51, 51);
+            top: 0vw; 
+            left: 65vw; 
+            font-size: calc(6vw);  
+            justify-content: center;
+            padding-left: 2%;
+            z-index: 3;
+            
+        }
+
+        .skor12 {
+            width: 10vw;
+            height: 10vw;
+            background-color: rgb(51, 51, 51);
+            top: 10.4vw; 
+            left: 65vw; 
+            font-size: calc(6vw); 
+            justify-content: center;
+            padding-left: 2%;
+            z-index: 3;
+        }
+
+        .skor21 {
+            width: 10vw;
+            height: 10vw;
+            background-color: rgb(51, 51, 51);
+            top: 0vw; 
+            left: 75vw; 
+            font-size: calc(6vw); 
+            justify-content: center;
+            padding-left: 2%;
+            z-index: 2;
+            
+        }
+
+        .skor22 {
+            width: 10vw;
+            height: 10vw;
+            background-color: rgb(51, 51, 51);
+            top: 10.4vw; 
+            left: 75vw; 
+            font-size: calc(6vw); 
+            justify-content: center;
+            padding-left: 2%;
+            z-index: 2;
+        }
+
+        .skor31 {
+            width: 10vw;
+            height: 10vw;
+            background-color: rgb(51, 51, 51);
+            top: 0vw; 
+            left: 85vw; 
+            font-size: calc(6vw); 
+            justify-content: center;
+            padding-left: 2%;
+            z-index: 1;
+            
+        }
+
+        .skor32 {
+            width: 10vw;
+            height: 10vw;
+            background-color: rgb(51, 51, 51);
+            top: 10.4vw; 
+            left: 85vw; 
+            font-size: calc(6vw); 
+            justify-content: center;
+            padding-left: 2%;
+            z-index: 1;
+        }
+
+        .shape.hidden {
+            opacity: 0; 
+            pointer-events: none; 
+        }
+
+    </style>
+</head>
+<body>
+    <div class="shape pemain1"></div>
+    <div class="shape pemain2"></div>
+    <div class="shape skor11"></div>
+    <div class="shape skor12"></div>
+    <div class="shape skor21"></div>
+    <div class="shape skor22"></div>  
+    <div class="shape skor31"></div>
+    <div class="shape skor32"></div>   
+    <div class="shape ball1"></div>
+    <div class="shape ball2"></div>  
+
+    <script type="module">
+        let game = 0;
+        let scc11 = 0;
+        let scc12 = 0;
+        let scc21 = 0;
+        let scc22 = 0;
+        let scc31 = 0;
+        let scc32 = 0;
+        let s12 = 0;
+
+        // Function to toggle visibility of shapes
+        function showShape(shapeClass) {
+            const shape = document.querySelector(`.${shapeClass}`);
+            if (shape) {
+                shape.classList.remove('hidden'); // Remove the "hidden" class to show the shape
+            }
+        }
+
+        // Function to hide a shape
+        function hideShape(shapeClass) {
+            const shape = document.querySelector(`.${shapeClass}`);
+            if (shape) {
+                shape.classList.add('hidden'); // Add the "hidden" class to hide the shape
+            }
+        }
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-database.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDMBuXHr7bBgN9D6kP1HCVtFNmwoNmERWc",
+            authDomain: "score-bandabaru.firebaseapp.com",
+            databaseURL: "https://score-bandabaru-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "score-bandabaru",
+            storageBucket: "score-bandabaru.firebasestorage.app",
+            messagingSenderId: "812878046338",
+            appId: "1:812878046338:web:a5c05709ca06b445f7809b",
+            measurementId: "G-PFW6MQ4Z4T"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Membaca data dari path Court1/p11
+        const pemain1data = document.querySelector('.shape.pemain1'); // Pastikan elemen HTML sudah ada
+        const pemain2data = document.querySelector('.shape.pemain2');
+        const sc11 = document.querySelector('.shape.skor11');
+        const sc12 = document.querySelector('.shape.skor12');
+        const sc21 = document.querySelector('.shape.skor21');
+        const sc22 = document.querySelector('.shape.skor22');
+        const sc31 = document.querySelector('.shape.skor31');
+        const sc32 = document.querySelector('.shape.skor32');
+
+        const dbRef = ref(database, '/Court1');
+        onValue(dbRef, (snapshot) => {
+        const data = snapshot.val();
+            
+            const match = data.stat;
+            if(match == 0){
+                hideShape('pemain1'); 
+                hideShape('pemain2');
+                hideShape('skor11'); 
+                hideShape('skor12'); 
+                hideShape('skor21'); 
+                hideShape('skor22'); 
+                hideShape('skor31'); 
+                hideShape('skor32'); 
+            }
+            else{
+                showShape('pemain1'); 
+                showShape('pemain2');
+                showShape('skor11'); 
+                showShape('skor12'); 
+                showShape('skor21'); 
+                showShape('skor22'); 
+                showShape('skor31'); 
+                showShape('skor32'); 
+            }
+
+            
+            if (pemain1data) pemain1data.textContent = data.p1;
+            if (pemain2data) pemain2data.textContent = data.p2;
+                
+
+            const ball = data.ball;
+            if ((data.sc11 == 99 && data.sc12 == 99)||(data.sc21 == 99 && data.sc22 == 99)||(data.sc31 == 99 && data.sc32 == 99)){
+                hideShape('ball1'); 
+                hideShape('ball2');
+            }
+            else{
+                if (ball == 0) {
+                    showShape('ball1'); 
+                    hideShape('ball2'); 
+                }   
+                else {
+                    showShape('ball2'); 
+                    hideShape('ball1');
+                }   
+            }
+
+            const set1 = data.st1;
+            const set2 = data.st2;
+            s12 = set1 + set2;
+                if (set1 == 0 && set2 == 0) {
+                    game = 1;
+                    hideShape('skor21'); 
+                    hideShape('skor22'); 
+                    hideShape('skor31'); 
+                    hideShape('skor32');
+                }
+
+                if (set1 >= 1 || set2 >= 1) {
+                    game = 2;
+                    showShape('skor21'); 
+                    showShape('skor22'); 
+                    hideShape('skor31'); 
+                    hideShape('skor32'); 
+                }
+
+                if (set1 >= 1 && set2 >= 1) {
+                    game = 3;
+                    showShape('skor31'); 
+                    showShape('skor32'); 
+                }       
+
+            if (sc11) sc11.textContent = data.sc11;
+            if (sc12) sc12.textContent = data.sc12;
+            if (sc21) sc21.textContent = data.sc21;
+            if (sc22) sc22.textContent = data.sc22;
+            if (sc31) sc31.textContent = data.sc31;
+            if (sc32) sc32.textContent = data.sc32;
+                
+        }
+        );
+</script>
+</body>
+</html>
